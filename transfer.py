@@ -9,21 +9,18 @@ import httplib2
 import googleapiclient.discovery
 import googleapiclient.http
 import googleapiclient.errors
-import oauth2client.client
+from google_auth_oauthlib.flow import InstalledAppFlow
+
 
 
 def get_drive_service():
     OAUTH2_SCOPE = 'https://www.googleapis.com/auth/drive'
     CLIENT_SECRETS = 'client_secrets.json'
-    flow = oauth2client.client.flow_from_clientsecrets(CLIENT_SECRETS, OAUTH2_SCOPE)
-    flow.redirect_uri = oauth2client.client.OOB_CALLBACK_URN
-    authorize_url = flow.step1_get_authorize_url()
-    print('Use this link for authorization: {}'.format(authorize_url))
-    code = six.moves.input('Verification code: ').strip()
-    credentials = flow.step2_exchange(code)
-    http = httplib2.Http()
-    credentials.authorize(http)
-    drive_service = googleapiclient.discovery.build('drive', 'v2', http=http)
+
+    flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRETS, scopes=[OAUTH2_SCOPE])
+    credentials = flow.run_local_server()
+
+    drive_service = googleapiclient.discovery.build('drive', 'v2', credentials=credentials)
     return drive_service
 
 def get_permission_id_for_email(service, email):

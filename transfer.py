@@ -118,6 +118,7 @@ def process_all_files(service, callback=None, callback_args=None, minimum_prefix
 
 def main():
     minimum_prefix = six.text_type(sys.argv[1])
+    
     new_owner = six.text_type(sys.argv[2])
     show_already_owned = False if len(sys.argv) > 3 and six.text_type(sys.argv[3]) == 'false' else True
     print('Changing all files at path "{}" to owner "{}"'.format(minimum_prefix, new_owner))
@@ -127,6 +128,11 @@ def main():
     permission_id = get_permission_id_for_email(service, new_owner)
     print('User {} is permission ID {}.'.format(new_owner, permission_id))
     process_all_files(service, grant_ownership, {'permission_id': permission_id, 'show_already_owned': show_already_owned }, minimum_prefix_split)
+    # Alternate that uses a folder_id string instead for shared folders
+    # https://github.com/davidstrauss/google-drive-recursive-ownership/issues/40#issuecomment-973666201
+    #folder_id = six.text_type(sys.argv[1]) #1iqrbJSFkm_H6i3UqWyAU1y64YshsJToV potato
+    #minimum_prefix_split = ""
+    #process_all_files(service, grant_ownership, {'permission_id': permission_id, 'show_already_owned': show_already_owned }, minimum_prefix_split, folder_id=folder_id)
     #print(files)
 
 
